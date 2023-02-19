@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/19 17:49:49 by ctardy            #+#    #+#             */
-/*   Updated: 2023/02/19 18:05:41 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/02/19 18:11:24 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,6 @@ int map_reader(char **argv, int flag)
 		free(inter);
 	}
 	close (fd);
+	// a finir
 	return (count);
 }
