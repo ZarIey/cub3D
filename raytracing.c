@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 17:16:58 by ctardy            #+#    #+#             */
-/*   Updated: 2023/02/25 14:18:27 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/02/25 19:58:46 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,15 +81,9 @@ int	color_select(int tale)
 	return ((start.tv_sec * 1000) + (start.tv_usec / 1000));
 }
 
-void game_loop(t_game game, t_data img)
+void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x, double dir_y, double plane_x, double plane_y)
 {
-	double pos_x = 22, pos_y = 12;  //x and y start position
-	double dir_x = -1, dir_y = 0; //initial direction vector
-	double plane_x = 0, plane_y = 0.66; //the 2d raycaster version of camera plane
-	double time = 0; //time of current frame
-	double old_time = 0; //time of previous frame
-
-	
+	(void)plane_x;
 	(void)game;
 	int w = 1024;
 	int h = 720;
@@ -187,7 +181,7 @@ void game_loop(t_game game, t_data img)
 			
      	 //choose wall color
     		// ColorRGB color;
-			// switch(worldMap[map_x][map_y])
+			// switch(map_ig[map_x][map_y])
     		// {
 			// 	case 1:  color = RGB_Red;  break; //red
         	// 	case 2:  color = RGB_Green;  break; //green
@@ -205,20 +199,83 @@ void game_loop(t_game game, t_data img)
     		 //draw the pixels of the stripe as a vertical line
 	  		draw(img, x, draw_start, draw_end, color);
 	  		//verLine(x, draw_start, draw_end, color);
-			(void) plane_x;
-			(void) plane_y;
-			(void) time;
-			(void) old_time;
+			// (void) plane_x;
+			// (void) plane_y;
+			// (void) time;
+			// (void) old_time;
     	 }
 
 }
 
+int key_press_hook(int keycode, void *params)
+{
+	t_num *num = (t_num *)params;
+	//(void)num;
+	double time = num->time;
+	double old_time = num->old_time;
+	double plane_x = num->plane_x;
+	double plane_y = num->plane_y;
+	double pos_x = num->pos_x;
+	double pos_y = num->pos_y;
+	double dir_x = num->dir_x;
+	double dir_y = num->dir_y;
+
+    double frame_time = (time - old_time) / 1000.0; //frame_time is the time this frame has taken, in seconds
+    //speed modifiers
+    	double move_speed = frame_time * 5.0; //the constant value is in squares/second
+    	double rot_speed = frame_time * 3.0; //the constant value is in radians/second
+		
+    if (keycode == 13)
+    {
+     	if(map_ig[(int)(pos_x + dir_x * move_speed)][(int)pos_y] == 0) pos_x += dir_x * move_speed;
+      	if(map_ig[(int)pos_x][(int)(pos_y + dir_y * move_speed)] == 0) pos_y += dir_y * move_speed;
+   	}
+    //move backwards if no wall behind you
+    if (keycode == 1)
+    {
+      	if(map_ig[(int)(pos_x - dir_x * move_speed)][(int)pos_y] == 0)
+			pos_x -= dir_x * move_speed;
+      	if(map_ig[(int)pos_x][(int)(pos_y - dir_y * move_speed)] == 0)
+			pos_y -= dir_y * move_speed;
+	}
+
+    //rotate to the right
+    if (keycode == 2)
+    {
+      //both camera direction and camera plane must be rotated
+      	double oldDir_x = dir_x;
+      	dir_x = dir_x * cos(-rot_speed) - dir_y * sin(-rot_speed);
+      	dir_y = oldDir_x * sin(-rot_speed) + dir_y * cos(-rot_speed);
+      	double oldPlane_x = plane_x;
+      	plane_x = plane_x * cos(-rot_speed) - plane_y * sin(-rot_speed);
+      	plane_y = oldPlane_x * sin(-rot_speed) + plane_y * cos(-rot_speed);
+   	}
+    //rotate to the left
+    if (keycode == 0)
+    {
+      //both camera direction and camera plane must be rotated
+      	double oldDir_x = dir_x;
+      	dir_x = dir_x * cos(rot_speed) - dir_y * sin(rot_speed);
+      	dir_y = oldDir_x * sin(rot_speed) + dir_y * cos(rot_speed);
+      	double oldPlane_x = plane_x;
+      	plane_x = plane_x * cos(rot_speed) - plane_y * sin(rot_speed);
+      	plane_y = oldPlane_x * sin(rot_speed) + plane_y * cos(rot_speed);
+   	}
+	return 0;
+}
+
 int main (int argc, char **argv)
 {
+	double pos_x = 22, pos_y = 12;  //x and y start position
+	double dir_x = -1, dir_y = 0; //initial direction vector
+	double plane_x = 0, plane_y = 0.66; //the 2d raycaster version of camera plane
+	double time = 0; //time of current frame
+	double old_time = 0; //time of previous frame
 	(void)argc;
 	(void)argv;
-	t_game game;
-	t_data img;
+	t_game	game;
+	t_data	img;
+	t_num	num;
 	//int count_lines;
 	//char **map_ig;
 
@@ -232,71 +289,33 @@ int main (int argc, char **argv)
 	game.window = mlx_new_window(game.mlx, 1024, 720, "cub3D");
 	img.img = mlx_new_image(game.mlx, 1024, 720);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
-	game_loop(game, img);
-	mlx_put_image_to_window(game.mlx, game.window, img.img, 0, 0);
-	mlx_loop(game.mlx);
+
 	
-	//map_reader(&game, argv, count_lines);
-	//map_ig = game->mapstr->map;
+	game_loop(game, img, pos_x, pos_y, dir_x, dir_y, plane_x, plane_y);
 			
-    		// //!!!!!!!!!! a checker plus tard
+ 	//    timing for input and FPS counter
+	//print(1.0 / frame_time); //FPS counter
+	mlx_put_image_to_window(game.mlx, game.window, img.img, 0, 0); // redraw();
+  // 	mlx_clear_window(game.mlx, game.window); // cls();
 
-			
- 		   //timing for input and FPS counter
-			// int old_time = time;
-    		// time = time_calculator();
-    		// double frame_time = (time - old_time) / 1000.0; //frame_time is the time this frame has taken, in seconds
-			// print(1.0 / frame_time); //FPS counter
-    		// redraw();
-    		// cls();
-
-    //speed modifiers
-    	// double move_speed = frame_time * 5.0; //the constant value is in squares/second
-    	// double rot_speed = frame_time * 3.0; //the constant value is in radians/secon
-		// (void) move_speed;
-		// (void) rot_speed;
-	//}
-
-/*
-   		readKeys();
-    //move forward if no wall in front of you
-    	if (keyDown(SDLK_UP))
-    	{
-      		if(worldMap[int(pos_x + dir_x * move_speed)][int(pos_y)] == false) pos_x += dir_x * move_speed;
-      		if(worldMap[int(pos_x)][int(pos_y + dir_y * move_speed)] == false) pos_y += dir_y * move_speed;
-   		}
-    //move backwards if no wall behind you
-    		if (keyDown(SDLK_DOWN))
-    		{
-      			if(worldMap[int(pos_x - dir_x * move_speed)][int(pos_y)] == false)
-					pos_x -= dir_x * move_speed;
-      			if(worldMap[int(pos_x)][int(pos_y - dir_y * move_speed)] == false)
-					pos_y -= dir_y * move_speed;
-  			}
-    //rotate to the right
-    	if (keyDown(SDLK_RIGHT))
-    	{
-      //both camera direction and camera plane must be rotated
-      		double oldDir_x = dir_x;
-      		dir_x = dir_x * cos(-rot_speed) - dir_y * sin(-rot_speed);
-      		dir_y = oldDir_x * sin(-rot_speed) + dir_y * cos(-rot_speed);
-      		double oldPlaneX = planeX;
-      		planeX = planeX * cos(-rot_speed) - planeY * sin(-rot_speed);
-      		planeY = oldPlaneX * sin(-rot_speed) + planeY * cos(-rot_speed);
-   		}
-    //rotate to the left
-    	if (keyDown(SDLK_LEFT))
-    	{
-      //both camera direction and camera plane must be rotated
-      		double oldDir_x = dir_x;
-      		dir_x = dir_x * cos(rot_speed) - dir_y * sin(rot_speed);
-      		dir_y = oldDir_x * sin(rot_speed) + dir_y * cos(rot_speed);
-      		double oldPlaneX = planeX;
-      		planeX = planeX * cos(rot_speed) - planeY * sin(rot_speed);
-      		planeY = oldPlaneX * sin(rot_speed) + planeY * cos(rot_speed);
-   		}
-  	}
+	old_time = time;
+    time = time_calculator();
+	
+	num.time = time;
+	num.old_time = old_time;
+	num.plane_x = plane_x;
+	num.plane_y = plane_y;
+	num.pos_x = pos_x;
+	num.pos_y = pos_y;
+	num.dir_x = dir_x;
+	num.dir_y = dir_y;
+	
+	
+ 	mlx_hook(game.window, 2, 0, key_press_hook, &num); //readKeys();
+	
+	//move forward if no wall in front of you
+	mlx_loop(game.mlx);
 }
-*/
-}
+
+
 
