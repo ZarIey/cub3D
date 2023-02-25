@@ -1,6 +1,9 @@
-NAME 	= 	cub3D
-FILES	= 	raytracing \
-
+NAME 	= 	cub3d
+FILES	= 	drawing			\
+			raytracing		\
+			color_manager	\
+			map_reader		\
+			
 SRCS_DIR = ./
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 
