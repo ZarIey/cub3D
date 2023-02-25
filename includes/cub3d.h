@@ -24,6 +24,19 @@ typedef struct s_data
 	int		endian;
 }	t_data;
 
+typedef struct t_num
+{
+	double *time;
+	double *old_time;
+	double *plane_x;
+	double *plane_y;
+	double *pos_x;
+	double *pos_y;
+	double *dir_x;
+	double *dir_y;
+
+}	t_num;
+
 typedef struct s_game
 {
 	void		*mlx;
@@ -32,6 +45,8 @@ typedef struct s_game
 	t_mapstr	mapstr;
 	int			window_height;
 	int			window_width;
+
+	int flag;
 
 }	t_game ;
 
@@ -47,6 +62,6 @@ int	create_trgb(int t, int r, int g, int b);
 // drawing
 
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
-void draw(t_data img, int x, int draw_start, int draw_end, int color);
+void	draw(t_data img, int x, int draw_start, int draw_end, int color);
 
 #endif
