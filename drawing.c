@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 14:36:26 by ctardy            #+#    #+#             */
-/*   Updated: 2023/02/25 13:46:25 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/02/26 15:51:52 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 
 void draw(t_data img, int x, int draw_start, int draw_end, int color)
 {
-	printf("Value de start %d et end %d de color %d\n", draw_start, draw_end, color);
+//	printf("Value de start %d et end %d de color %d\n", draw_start, draw_end, color);
 	while (draw_start < draw_end)
 	{
 		my_mlx_pixel_put(&img, x, draw_start++, color);

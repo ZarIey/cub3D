@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 17:16:58 by ctardy            #+#    #+#             */
-/*   Updated: 2023/02/25 19:58:46 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/02/26 18:35:37 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,20 +83,21 @@ int	color_select(int tale)
 
 void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x, double dir_y, double plane_x, double plane_y)
 {
+
+	printf("LA BOUCLE \n");
 	(void)plane_x;
 	(void)game;
 	int w = 1024;
 	int h = 720;
-//	double ww = (double)w;
+
 	// while (1)
 	// {
    		for(int x = 0; x < w; x++)
     	{
 			//calculate ray position and direction
 			double camera_x = 2 * x / (double)w - 1; //x-coordinate in camera space
-			double ray_dir_x = dir_x + plane_y * camera_x;
+			double ray_dir_x = dir_x + plane_x * camera_x;
 			double ray_dir_y = dir_y + plane_y * camera_x;
-		//	printf("%f %f %f %f %f %f\n ", camera_x, ray_dir_x, ray_dir_y, pos_x, pos_y, plane_x);
       //which box of the map we're in
    			int map_x = (int)pos_x;
     		int map_y = (int)pos_y;
@@ -180,15 +181,6 @@ void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x
 				draw_end = h - 1;
 			
      	 //choose wall color
-    		// ColorRGB color;
-			// switch(map_ig[map_x][map_y])
-    		// {
-			// 	case 1:  color = RGB_Red;  break; //red
-        	// 	case 2:  color = RGB_Green;  break; //green
-        	// 	case 3:  color = RGB_Blue;   break; //blue
-        	// 	case 4:  color = RGB_White;  break; //white
-        	// 	default: color = RGB_Yellow; break; //yellow
-      		// }
 			int color;
 			color = color_select(map_ig[map_x][map_y]);
 
@@ -199,119 +191,116 @@ void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x
     		 //draw the pixels of the stripe as a vertical line
 	  		draw(img, x, draw_start, draw_end, color);
 	  		//verLine(x, draw_start, draw_end, color);
-			// (void) plane_x;
-			// (void) plane_y;
-			// (void) time;
-			// (void) old_time;
     	 }
 
 }
 
 int key_press_hook(int keycode, void *params)
 {
-	t_num *num = (t_num *)params;
+	t_game *game = (t_game *)params;
 	//(void)num;
-	double time = num->time;
-	double old_time = num->old_time;
-	double plane_x = num->plane_x;
-	double plane_y = num->plane_y;
-	double pos_x = num->pos_x;
-	double pos_y = num->pos_y;
-	double dir_x = num->dir_x;
-	double dir_y = num->dir_y;
-
-    double frame_time = (time - old_time) / 1000.0; //frame_time is the time this frame has taken, in seconds
+    game->numig.frame_time = (game->numig.time - game->numig.old_time) / 1000.0; //frame_time is the time this frame has taken, in seconds
     //speed modifiers
-    	double move_speed = frame_time * 5.0; //the constant value is in squares/second
-    	double rot_speed = frame_time * 3.0; //the constant value is in radians/second
+    game->numig.move_speed = game->numig.frame_time * 5.0; //the constant value is in squares/second
+    game->numig.rot_speed = game->numig.frame_time * 3.0; //the constant value is in radians/second
 		
+	printf("vec %f %f\n", game->numig.plane_x, game->numig.plane_y);
+	printf("pos play %f %f\n", game->numig.pos_x, game->numig.pos_y);
     if (keycode == 13)
     {
-     	if(map_ig[(int)(pos_x + dir_x * move_speed)][(int)pos_y] == 0) pos_x += dir_x * move_speed;
-      	if(map_ig[(int)pos_x][(int)(pos_y + dir_y * move_speed)] == 0) pos_y += dir_y * move_speed;
+		printf("Pressed W\n");
+		printf ("pos_x %f\n", game->numig.pos_x);
+		printf ("dir_x %f\n", game->numig.dir_x);
+		printf ("MS %f\n", game->numig.move_speed);
+		printf ("pos_y %f\n", game->numig.pos_y);
+		exit(0);
+     	if(map_ig[(int)(game->numig.pos_x + game->numig.dir_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
+		{
+			
+			game->numig.pos_x += game->numig.dir_x * game->numig.move_speed;
+		}
+      	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y + game->numig.dir_y * game->numig.move_speed)] == 0)
+			{
+				
+				game->numig.pos_y += game->numig.dir_y * game->numig.move_speed;
+			}
+			exit(0);
    	}
     //move backwards if no wall behind you
     if (keycode == 1)
     {
-      	if(map_ig[(int)(pos_x - dir_x * move_speed)][(int)pos_y] == 0)
-			pos_x -= dir_x * move_speed;
-      	if(map_ig[(int)pos_x][(int)(pos_y - dir_y * move_speed)] == 0)
-			pos_y -= dir_y * move_speed;
+		printf("Pressed S\n");
+      	if(map_ig[(int)(game->numig.pos_x - game->numig.dir_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
+			game->numig.pos_x -= game->numig.dir_x * game->numig.move_speed;
+      	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y - game->numig.dir_y * game->numig.move_speed)] == 0)
+			game->numig.pos_y -= game->numig.dir_y * game->numig.move_speed;
 	}
 
     //rotate to the right
     if (keycode == 2)
     {
+		printf("Pressed A\n");
       //both camera direction and camera plane must be rotated
-      	double oldDir_x = dir_x;
-      	dir_x = dir_x * cos(-rot_speed) - dir_y * sin(-rot_speed);
-      	dir_y = oldDir_x * sin(-rot_speed) + dir_y * cos(-rot_speed);
-      	double oldPlane_x = plane_x;
-      	plane_x = plane_x * cos(-rot_speed) - plane_y * sin(-rot_speed);
-      	plane_y = oldPlane_x * sin(-rot_speed) + plane_y * cos(-rot_speed);
+      	double oldDir_x = game->numig.dir_x;
+      	game->numig.dir_x = game->numig.dir_x * cos(-game->numig.rot_speed) - game->numig.dir_y * sin(-game->numig.rot_speed);
+      	game->numig.dir_y = oldDir_x * sin(-game->numig.rot_speed) + game->numig.dir_y * cos(-game->numig.rot_speed);
+      	double oldPlane_x = game->numig.plane_x;
+      	game->numig.plane_x = game->numig.plane_x * cos(-game->numig.rot_speed) - game->numig.plane_y * sin(-game->numig.rot_speed);
+      	game->numig.plane_y = oldPlane_x * sin(-game->numig.rot_speed) + game->numig.plane_y * cos(-game->numig.rot_speed);
+		
    	}
     //rotate to the left
     if (keycode == 0)
     {
+		printf("Pressed D\n");
       //both camera direction and camera plane must be rotated
-      	double oldDir_x = dir_x;
-      	dir_x = dir_x * cos(rot_speed) - dir_y * sin(rot_speed);
-      	dir_y = oldDir_x * sin(rot_speed) + dir_y * cos(rot_speed);
-      	double oldPlane_x = plane_x;
-      	plane_x = plane_x * cos(rot_speed) - plane_y * sin(rot_speed);
-      	plane_y = oldPlane_x * sin(rot_speed) + plane_y * cos(rot_speed);
+      	double oldDir_x = game->numig.dir_x;
+      	game->numig.dir_x = game->numig.dir_x * cos(game->numig.rot_speed) - game->numig.dir_y * sin(game->numig.rot_speed);
+      	game->numig.dir_y = oldDir_x * sin(game->numig.rot_speed) + game->numig.dir_y * cos(game->numig.rot_speed);
+      	double oldPlane_x = game->numig.plane_x;
+      	game->numig.plane_x = game->numig.plane_x * cos(game->numig.rot_speed) - game->numig.plane_y * sin(game->numig.rot_speed);
+      	game->numig.plane_y = oldPlane_x * sin(game->numig.rot_speed) + game->numig.plane_y * cos(game->numig.rot_speed);
    	}
+  	mlx_clear_window(game->mlx, game->window); // cls();
+	game_loop(*game, game->imgig, game->numig.pos_x, game->numig.pos_y, game->numig.dir_x, game->numig.dir_y, game->numig.plane_x, game->numig.plane_y);
+	//mlx_destroy_image(game->mlx, game->imgig.img);
+	//mlx_put_image_to_window(game->mlx, game->window, game->imgig.img, 0, 0); // redraw();
 	return 0;
 }
 
 int main (int argc, char **argv)
 {
-	double pos_x = 22, pos_y = 12;  //x and y start position
-	double dir_x = -1, dir_y = 0; //initial direction vector
-	double plane_x = 0, plane_y = 0.66; //the 2d raycaster version of camera plane
-	double time = 0; //time of current frame
-	double old_time = 0; //time of previous frame
+
 	(void)argc;
 	(void)argv;
 	t_game	game;
-	t_data	img;
-	t_num	num;
-	//int count_lines;
-	//char **map_ig;
-
 	ft_memset(&game, 0, sizeof(t_game));
-	//count_lines = map_reader(&game, argv, 0);
+
+	game.numig.pos_x = 14, game.numig.pos_y = 14;  //x and y start position
+	game.numig.dir_x = -1, game.numig.dir_y = 0; //initial direction vector
+	game.numig.plane_x = 0, game.numig.plane_y = 0.66; //the 2d raycaster version of camera plane
+	game.numig.time = 0; //time of current frame
+	game.numig.old_time = 0; //time of previous frame
+	game.numig.old_time = game.numig.time;
+    game.numig.time = time_calculator();
 	game.mlx = mlx_init();
 
-	//game.window_height = count_lines;
 	game.window_height = 24;
 	game.window_width = 24;
 	game.window = mlx_new_window(game.mlx, 1024, 720, "cub3D");
-	img.img = mlx_new_image(game.mlx, 1024, 720);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
+	game.imgig.img = mlx_new_image(game.mlx, 1024, 720);
+	game.imgig.addr = mlx_get_data_addr(game.imgig.img, &game.imgig.bits_per_pixel, &game.imgig.line_length, &game.imgig.endian);
 
 	
-	game_loop(game, img, pos_x, pos_y, dir_x, dir_y, plane_x, plane_y);
-			
- 	//    timing for input and FPS counter
-	//print(1.0 / frame_time); //FPS counter
-	mlx_put_image_to_window(game.mlx, game.window, img.img, 0, 0); // redraw();
-  // 	mlx_clear_window(game.mlx, game.window); // cls();
+	game_loop(game, game.imgig, game.numig.pos_x, game.numig.pos_y, game.numig.dir_x, game.numig.dir_y, game.numig.plane_x, game.numig.plane_y);
+	
+	
+	printf("-------- vec %f %f\n", game.numig.plane_x, game.numig.plane_y);
+	printf("-------- pos play %f %f\n", game.numig.pos_x, game.numig.pos_y);
+	mlx_put_image_to_window(game.mlx, game.window, game.imgig.img, 0, 0); // redraw();
 
-	old_time = time;
-    time = time_calculator();
 	
-	num.time = time;
-	num.old_time = old_time;
-	num.plane_x = plane_x;
-	num.plane_y = plane_y;
-	num.pos_x = pos_x;
-	num.pos_y = pos_y;
-	num.dir_x = dir_x;
-	num.dir_y = dir_y;
-	
-	
- 	mlx_hook(game.window, 2, 0, key_press_hook, &num); //readKeys();
+ 	mlx_hook(game.window, 2, 0, key_press_hook, &game); //readKeys();
 	
 	//move forward if no wall in front of you
 	mlx_loop(game.mlx);
