@@ -28,15 +28,16 @@ typedef struct t_num
 {
 	double time;
 	double old_time;
+	double frame_time;
 	double plane_x;
 	double plane_y;
 	double pos_x;
 	double pos_y;
 	double dir_x;
 	double dir_y;
-	double frame_time;
 	double move_speed;
 	double rot_speed;
+	double start;
 
 }	t_num;
 
