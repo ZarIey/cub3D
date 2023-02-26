@@ -26,14 +26,17 @@ typedef struct s_data
 
 typedef struct t_num
 {
-	double *time;
-	double *old_time;
-	double *plane_x;
-	double *plane_y;
-	double *pos_x;
-	double *pos_y;
-	double *dir_x;
-	double *dir_y;
+	double time;
+	double old_time;
+	double plane_x;
+	double plane_y;
+	double pos_x;
+	double pos_y;
+	double dir_x;
+	double dir_y;
+	double frame_time;
+	double move_speed;
+	double rot_speed;
 
 }	t_num;
 
@@ -42,7 +45,9 @@ typedef struct s_game
 	void		*mlx;
 	void		*window;
 
-	t_mapstr	mapstr;
+	int			**map_ig;
+	t_num		numig;
+	t_data		imgig;
 	int			window_height;
 	int			window_width;
 
@@ -54,6 +59,9 @@ typedef struct s_game
 
 int map_reader(t_game *game, char **argv, int flag);
 
+// map declare
+
+int map_declare(void);
 
 // color
 
