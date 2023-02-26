@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 17:16:58 by ctardy            #+#    #+#             */
-/*   Updated: 2023/02/26 18:35:37 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/02/26 19:21:19 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	color_select(int tale)
     return new_color = create_trgb(0, 255, 255, 0); //yellow
 }
 
- long    time_calculator(void)
+ double    time_calculator(void)
  {
 	struct timeval  start;
 	gettimeofday(&start, NULL);
@@ -199,7 +199,12 @@ int key_press_hook(int keycode, void *params)
 {
 	t_game *game = (t_game *)params;
 	//(void)num;
+	game->numig.old_time = game->numig.time;
+	game->numig.time = time_calculator() - game->numig.start;
+
     game->numig.frame_time = (game->numig.time - game->numig.old_time) / 1000.0; //frame_time is the time this frame has taken, in seconds
+	printf("FPS %f\n", game->numig.frame_time);
+   
     //speed modifiers
     game->numig.move_speed = game->numig.frame_time * 5.0; //the constant value is in squares/second
     game->numig.rot_speed = game->numig.frame_time * 3.0; //the constant value is in radians/second
@@ -213,7 +218,7 @@ int key_press_hook(int keycode, void *params)
 		printf ("dir_x %f\n", game->numig.dir_x);
 		printf ("MS %f\n", game->numig.move_speed);
 		printf ("pos_y %f\n", game->numig.pos_y);
-		exit(0);
+		//exit(0);
      	if(map_ig[(int)(game->numig.pos_x + game->numig.dir_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
 		{
 			
@@ -224,7 +229,6 @@ int key_press_hook(int keycode, void *params)
 				
 				game->numig.pos_y += game->numig.dir_y * game->numig.move_speed;
 			}
-			exit(0);
    	}
     //move backwards if no wall behind you
     if (keycode == 1)
@@ -263,8 +267,7 @@ int key_press_hook(int keycode, void *params)
    	}
   	mlx_clear_window(game->mlx, game->window); // cls();
 	game_loop(*game, game->imgig, game->numig.pos_x, game->numig.pos_y, game->numig.dir_x, game->numig.dir_y, game->numig.plane_x, game->numig.plane_y);
-	//mlx_destroy_image(game->mlx, game->imgig.img);
-	//mlx_put_image_to_window(game->mlx, game->window, game->imgig.img, 0, 0); // redraw();
+	mlx_put_image_to_window(game->mlx, game->window, game->imgig.img, 0, 0); // redraw();
 	return 0;
 }
 
@@ -280,9 +283,11 @@ int main (int argc, char **argv)
 	game.numig.dir_x = -1, game.numig.dir_y = 0; //initial direction vector
 	game.numig.plane_x = 0, game.numig.plane_y = 0.66; //the 2d raycaster version of camera plane
 	game.numig.time = 0; //time of current frame
+	game.numig.start = time_calculator(); //time of current frame
 	game.numig.old_time = 0; //time of previous frame
 	game.numig.old_time = game.numig.time;
-    game.numig.time = time_calculator();
+    game.numig.time = time_calculator() - game.numig.start;
+	printf("*** valeur de time %f\n", game.numig.time);
 	game.mlx = mlx_init();
 
 	game.window_height = 24;
