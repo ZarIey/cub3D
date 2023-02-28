@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 17:16:58 by ctardy            #+#    #+#             */
-/*   Updated: 2023/02/28 16:33:52 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/02/28 17:01:56 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ int key_press_hook(int keycode, void *params)
     // game->numig.rot_speed = game->numig.frame_time * 3.0; //the constant value is in radians/second
 		
 	game->numig.move_speed = 0.17;
-	game->numig.rot_speed = 0.17;
+	game->numig.rot_speed = 0.10;
 
 		
 	// printf("vec %f %f\n", game->numig.plane_x, game->numig.plane_y);
@@ -253,8 +253,26 @@ int key_press_hook(int keycode, void *params)
 			game->numig.pos_y -= game->numig.dir_y * game->numig.move_speed;
 	}
 
+	if (keycode == 2)
+    {
+		//exit(0);
+     	if(map_ig[(int)(game->numig.pos_x + game->numig.plane_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
+			game->numig.pos_x += game->numig.plane_x * game->numig.move_speed;
+      	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y + game->numig.plane_y * game->numig.move_speed)] == 0)
+			game->numig.pos_y += game->numig.plane_y * game->numig.move_speed;
+   	}
+
+	if (keycode == 0)
+    {
+		//exit(0);
+     	if(map_ig[(int)(game->numig.pos_x + game->numig.plane_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
+			game->numig.pos_x -= game->numig.plane_x * game->numig.move_speed;
+      	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y + game->numig.plane_y * game->numig.move_speed)] == 0)
+			game->numig.pos_y -= game->numig.plane_y * game->numig.move_speed;
+   	}
+
     //rotate to the right
-    if (keycode == 2)
+    if (keycode == 124)
     {
 		printf("Pressed A\n");
       //both camera direction and camera plane must be rotated
@@ -267,7 +285,7 @@ int key_press_hook(int keycode, void *params)
 		
    	}
     //rotate to the left
-    if (keycode == 0)
+    if (keycode == 123)
     {
 		printf("Pressed D\n");
       //both camera direction and camera plane must be rotated
