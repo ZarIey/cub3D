@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 17:16:58 by ctardy            #+#    #+#             */
-/*   Updated: 2023/02/26 19:21:19 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/02/28 16:33:52 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ int	color_select(int tale)
 	if (tale == 3)
 		return new_color = create_trgb(0, 0, 0, 255); //blue
 	if (tale == 4)
-		return new_color = create_trgb(255, 255, 255, 255); //white
+		return new_color = create_trgb(0, 0, 0, 255); //white
     return new_color = create_trgb(0, 255, 255, 0); //yellow
 }
 
@@ -195,41 +195,54 @@ void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x
 
 }
 
+int exit_game(void)
+{
+	exit(0);
+}
+
 int key_press_hook(int keycode, void *params)
 {
 	t_game *game = (t_game *)params;
-	//(void)num;
+	// game->nmig.start = time_calculator();
+	
 	game->numig.old_time = game->numig.time;
 	game->numig.time = time_calculator() - game->numig.start;
-
+	//printf("VALEUR DE START %f\n", game->numig.start);
     game->numig.frame_time = (game->numig.time - game->numig.old_time) / 1000.0; //frame_time is the time this frame has taken, in seconds
+
 	printf("FPS %f\n", game->numig.frame_time);
+	printf("---- time %f\n", game->numig.time);
+	printf("old_time %f\n", game->numig.old_time);
    
     //speed modifiers
-    game->numig.move_speed = game->numig.frame_time * 5.0; //the constant value is in squares/second
-    game->numig.rot_speed = game->numig.frame_time * 3.0; //the constant value is in radians/second
+    // game->numig.move_speed = game->numig.frame_time * 5.0; //the constant value is in squares/second
+	// printf("---- game->numig.move_speed : %f\n",game->numig.move_speed);
+    // game->numig.rot_speed = game->numig.frame_time * 3.0; //the constant value is in radians/second
 		
-	printf("vec %f %f\n", game->numig.plane_x, game->numig.plane_y);
-	printf("pos play %f %f\n", game->numig.pos_x, game->numig.pos_y);
+	game->numig.move_speed = 0.17;
+	game->numig.rot_speed = 0.17;
+
+		
+	// printf("vec %f %f\n", game->numig.plane_x, game->numig.plane_y);
+	// printf("pos play %f %f\n", game->numig.pos_x, game->numig.pos_y);
+	// printf ("pos_x %f\n", game->numig.pos_x);
+	// printf ("dir_x %f\n", game->numig.dir_x);
+	// printf ("MS %f\n", game->numig.move_speed);
+	// printf ("pos_y %f\n", game->numig.pos_y);
+
+	if (keycode == 53)
+		exit_game();
     if (keycode == 13)
     {
-		printf("Pressed W\n");
-		printf ("pos_x %f\n", game->numig.pos_x);
-		printf ("dir_x %f\n", game->numig.dir_x);
-		printf ("MS %f\n", game->numig.move_speed);
-		printf ("pos_y %f\n", game->numig.pos_y);
 		//exit(0);
      	if(map_ig[(int)(game->numig.pos_x + game->numig.dir_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
-		{
-			
 			game->numig.pos_x += game->numig.dir_x * game->numig.move_speed;
-		}
       	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y + game->numig.dir_y * game->numig.move_speed)] == 0)
-			{
-				
-				game->numig.pos_y += game->numig.dir_y * game->numig.move_speed;
-			}
+			game->numig.pos_y += game->numig.dir_y * game->numig.move_speed;
    	}
+
+	// noalexan
+
     //move backwards if no wall behind you
     if (keycode == 1)
     {
@@ -266,6 +279,8 @@ int key_press_hook(int keycode, void *params)
       	game->numig.plane_y = oldPlane_x * sin(game->numig.rot_speed) + game->numig.plane_y * cos(game->numig.rot_speed);
    	}
   	mlx_clear_window(game->mlx, game->window); // cls();
+	game->imgig.img = mlx_new_image(game->mlx, 1024, 720);
+	game->imgig.addr = mlx_get_data_addr(game->imgig.img, &game->imgig.bits_per_pixel, &game->imgig.line_length, &game->imgig.endian);
 	game_loop(*game, game->imgig, game->numig.pos_x, game->numig.pos_y, game->numig.dir_x, game->numig.dir_y, game->numig.plane_x, game->numig.plane_y);
 	mlx_put_image_to_window(game->mlx, game->window, game->imgig.img, 0, 0); // redraw();
 	return 0;
@@ -287,27 +302,17 @@ int main (int argc, char **argv)
 	game.numig.old_time = 0; //time of previous frame
 	game.numig.old_time = game.numig.time;
     game.numig.time = time_calculator() - game.numig.start;
-	printf("*** valeur de time %f\n", game.numig.time);
+	
 	game.mlx = mlx_init();
-
-	game.window_height = 24;
-	game.window_width = 24;
 	game.window = mlx_new_window(game.mlx, 1024, 720, "cub3D");
 	game.imgig.img = mlx_new_image(game.mlx, 1024, 720);
 	game.imgig.addr = mlx_get_data_addr(game.imgig.img, &game.imgig.bits_per_pixel, &game.imgig.line_length, &game.imgig.endian);
 
-	
 	game_loop(game, game.imgig, game.numig.pos_x, game.numig.pos_y, game.numig.dir_x, game.numig.dir_y, game.numig.plane_x, game.numig.plane_y);
-	
-	
-	printf("-------- vec %f %f\n", game.numig.plane_x, game.numig.plane_y);
-	printf("-------- pos play %f %f\n", game.numig.pos_x, game.numig.pos_y);
-	mlx_put_image_to_window(game.mlx, game.window, game.imgig.img, 0, 0); // redraw();
 
-	
- 	mlx_hook(game.window, 2, 0, key_press_hook, &game); //readKeys();
-	
-	//move forward if no wall in front of you
+	mlx_put_image_to_window(game.mlx, game.window, game.imgig.img, 0, 0); // redraw();
+	mlx_hook(game.window, 17, (1L << 17), exit_game, &game);
+ 	mlx_hook(game.window, 2, (1L << 0), key_press_hook, &game); //readKeys();
 	mlx_loop(game.mlx);
 }
 
