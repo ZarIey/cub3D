@@ -38,8 +38,17 @@ typedef struct t_num
 	double move_speed;
 	double rot_speed;
 	double start;
-
 }	t_num;
+
+typedef struct s_tex
+{
+	int	tex_x;
+	int	tex_y;
+	int buffer[720][1024];
+	int *texture[8];
+	int	texture_width;
+	int	texture_height;
+}	t_tex;
 
 typedef struct s_game
 {
@@ -49,10 +58,9 @@ typedef struct s_game
 	int			**map_ig;
 	t_num		numig;
 	t_data		imgig;
+	t_tex		texig;
 	int			window_height;
 	int			window_width;
-
-	int flag;
 
 }	t_game ;
 
