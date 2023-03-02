@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 17:16:58 by ctardy            #+#    #+#             */
-/*   Updated: 2023/02/28 17:01:56 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/03/02 19:04:52 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 #include <stdio.h>
 #include <sys/time.h>
+#define screen_width 1024
+#define screen_height 720
 
 int map_ig[24][24] =
 {
@@ -87,6 +89,7 @@ void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x
 	printf("LA BOUCLE \n");
 	(void)plane_x;
 	(void)game;
+	(void)img;
 	int w = 1024;
 	int h = 720;
 
@@ -179,24 +182,71 @@ void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x
       		int draw_end = line_height / 2 + h / 2;
     		if (draw_end >= h)
 				draw_end = h - 1;
-			
-     	 //choose wall color
-			int color;
-			color = color_select(map_ig[map_x][map_y]);
+// ------------------------------------------------------------------------------------------------------------------------------
+   		//texturing calculations
+    	int texNum = map_ig[map_x][map_y] - 1; //1 subtracted from it so that texture 0 can be used!
 
-      //give x and y sides different brightness
-		    if (side == 1) 
-				color = color / 2;
+    	//calculate value of wall_x
+    	double wall_x; //where exactly the wall was hit
+    	if (side == 0) wall_x = game.numig.pos_y + perp_wall_dist * ray_dir_y;
+    	else           wall_x = game.numig.pos_x + perp_wall_dist * ray_dir_x;
+    	wall_x -= floor((wall_x));
 
-    		 //draw the pixels of the stripe as a vertical line
-	  		draw(img, x, draw_start, draw_end, color);
-	  		//verLine(x, draw_start, draw_end, color);
-    	 }
+      //x coordinate on the texture
+    	game.texig.tex_x = (int)(wall_x * (double)(game.texig.texture_width));
+    	if(side == 0 && ray_dir_x > 0) game.texig.tex_x = game.texig.texture_width - game.texig.tex_x - 1;
+    	if(side == 1 && ray_dir_y < 0) game.texig.tex_x = game.texig.texture_width - game.texig.tex_x - 1;
 
+	  // ------------------------------------------------------------------------------------------------------------------------
+    //  	 //choose wall color
+	// 		int color;
+	// 		color = color_select(map_ig[map_x][map_y]);
+
+    //   //give x and y sides different brightness
+	// 	    if (side == 1) 
+	// 			color = color / 2;
+
+    // 		 //draw the pixels of the stripe as a vertical line
+	//   		draw(img, x, draw_start, draw_end, color);
+	//   		//verLine(x, draw_start, draw_end, color);
+// ------------------------------------------------------------------------------------------------------------------------------
+    // How much to increase the texture coordinate per screen pixel
+    	double step = 1.0 * game.texig.texture_height / line_height;
+    // Starting texture coordinate
+		double texPos = (draw_start - h / 2 + line_height / 2) * step;
+    	for(int y = draw_start; y < draw_end; y++)
+    	{
+		// Cast the texture coordinate to integer, and mask with (game.texig.texture_height - 1) in case of overflow
+    		game.texig.tex_y = (int)texPos & (game.texig.texture_height - 1);
+        	texPos += step;
+        	int color = game.texig.texture[texNum][game.texig.texture_height * game.texig.tex_y + game.texig.tex_x];
+        //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
+        	if(side == 1)
+			{
+				color = (color >> 1) & 8355711;
+        		game.texig.buffer[y][x] = color;
+			}
+    	}
+	//printf("YO LES ZINC %d\n", game.texig.buffer[0][0]);
+    //	drawBuffer(game.texig.buffer[0]);
+    for(int y = 0; y < h; y++)
+	{
+	//	printf ("valeur de y : %d\n", y);
+	//	printf ("valeur de h : %d\n", h);
+		for(int x = 0; x < w; x++)
+		{
+		//	printf ("valeur de x : %d\n", x);
+	//		printf ("valeur de w : %d\n", w);
+			game.texig.buffer[y][x] = 0; //clear the buffer instead of cls()
+			//exit(0);
+		}
+	}
+}
 }
 
 int exit_game(void)
 {
+	
 	exit(0);
 }
 
@@ -304,6 +354,26 @@ int key_press_hook(int keycode, void *params)
 	return 0;
 }
 
+int malloc_texture(t_game *game)
+{
+	//game->texig.buffer = malloc[720][1024]; // y-coordinate first because it works per scanline
+	for (int i = 0; i < 8; i++) {
+		game->texig.texture[i] = malloc(/*game.texig.texture_width*/64 * 64/*game.texig.texture_height*/ * sizeof(int));
+	}
+	return 0;
+}
+
+
+void free_texture(t_game *game)
+{
+	int i;
+    for (i = 0; i < 8; i++)
+	{
+        free(game->texig.texture[i]);
+    }
+}
+
+
 int main (int argc, char **argv)
 {
 
@@ -320,17 +390,42 @@ int main (int argc, char **argv)
 	game.numig.old_time = 0; //time of previous frame
 	game.numig.old_time = game.numig.time;
     game.numig.time = time_calculator() - game.numig.start;
-	
+	malloc_texture(&game);
 	game.mlx = mlx_init();
 	game.window = mlx_new_window(game.mlx, 1024, 720, "cub3D");
 	game.imgig.img = mlx_new_image(game.mlx, 1024, 720);
 	game.imgig.addr = mlx_get_data_addr(game.imgig.img, &game.imgig.bits_per_pixel, &game.imgig.line_length, &game.imgig.endian);
 
-	game_loop(game, game.imgig, game.numig.pos_x, game.numig.pos_y, game.numig.dir_x, game.numig.dir_y, game.numig.plane_x, game.numig.plane_y);
+	game.texig.texture_width = 64;
+	game.texig.texture_height = 64;
+	// int buff2[720][1024];
+	// game.texig.buffer = buff2; 
+	
+  //generate some textures
+  for(int x = 0; x < game.texig.texture_width; x++)
+  for(int y = 0; y < game.texig.texture_height; y++)
+  {
+    int xorcolor = (x * 256 / game.texig.texture_width) ^ (y * 256 / game.texig.texture_height);
+    //int xcolor = x * 256 / game.texig.texture_width;
+    int ycolor = y * 256 / game.texig.texture_height;
+    int xycolor = y * 128 / game.texig.texture_height + x * 128 / game.texig.texture_width;
+    game.texig.texture[0][game.texig.texture_width * y + x] = 65536 * 254 * (x != y && x != game.texig.texture_width - y); //flat red texture with black cross
+	game.texig.texture[1][game.texig.texture_width * y + x] = xycolor + 256 * xycolor + 65536 * xycolor; //sloped greyscale
+    game.texig.texture[2][game.texig.texture_width * y + x] = 256 * xycolor + 65536 * xycolor; //sloped yellow gradient
+    game.texig.texture[3][game.texig.texture_width * y + x] = xorcolor + 256 * xorcolor + 65536 * xorcolor; //xor greyscale
+    game.texig.texture[4][game.texig.texture_width * y + x] = 256 * xorcolor; //xor green
+    game.texig.texture[5][game.texig.texture_width * y + x] = 65536 * 192 * (x % 16 && y % 16); //red bricks
+    game.texig.texture[6][game.texig.texture_width * y + x] = 65536 * ycolor; //red gradient
+    game.texig.texture[7][game.texig.texture_width * y + x] = 128 + 256 * 128 + 65536 * 128; //flat grey texture
+  }
 
+	game_loop(game, game.imgig, game.numig.pos_x, game.numig.pos_y, game.numig.dir_x, game.numig.dir_y, game.numig.plane_x, game.numig.plane_y);
 	mlx_put_image_to_window(game.mlx, game.window, game.imgig.img, 0, 0); // redraw();
 	mlx_hook(game.window, 17, (1L << 17), exit_game, &game);
  	mlx_hook(game.window, 2, (1L << 0), key_press_hook, &game); //readKeys();
+	free_texture(&game);
+	// system ("leaks cub3d");
+	// exit(0);
 	mlx_loop(game.mlx);
 }
 
