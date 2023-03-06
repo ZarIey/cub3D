@@ -6,14 +6,12 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 17:16:58 by ctardy            #+#    #+#             */
-/*   Updated: 2023/03/04 16:28:47 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/03/06 21:27:28 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/cub3d.h"
 
-#include <stdio.h>
-#include <sys/time.h>
 #define screen_width 1024
 #define screen_height 720
 
@@ -45,45 +43,7 @@ int map_ig[24][24] =
   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
-double v_abs(double value)
-{
-	if (value >= 0)
-		return (value);
-	else
-		return (value *= -1);
-}
-
-double delta_dist_init(double d, double r)
-{
-	if (!r)
-		d = INFINITY;
-	else if (r)
-		d = v_abs(1 / r);
-	return (d);
-}
-
-int	color_select(int tale)
-{
-	int new_color;
-	if (tale == 1)
-		return new_color = create_trgb(0, 255, 0, 0); //red
-	if (tale == 2)
-		return new_color = create_trgb(0, 0, 255, 0); //green
-	if (tale == 3)
-		return new_color = create_trgb(0, 0, 0, 255); //blue
-	if (tale == 4)
-		return new_color = create_trgb(0, 0, 0, 255); //white
-    return new_color = create_trgb(0, 255, 255, 0); //yellow
-}
-
- double    time_calculator(void)
- {
-	struct timeval  start;
-	gettimeofday(&start, NULL);
-	return ((start.tv_sec * 1000) + (start.tv_usec / 1000));
-}
-
-void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x, double dir_y, double plane_x, double plane_y)
+void game_loop(t_game *game, t_data img, double pos_x, double pos_y, double dir_x, double dir_y, double plane_x, double plane_y)
 {
 
 	printf("LA BOUCLE \n");
@@ -183,197 +143,55 @@ void game_loop(t_game game, t_data img, double pos_x, double pos_y, double dir_x
     		if (draw_end >= h)
 				draw_end = h - 1;
 // ------------------------------------------------------------------------------------------------------------------------------
-   	// 	//texturing calculations
-    // 	int texNum = map_ig[map_x][map_y] - 1; //1 subtracted from it so that texture 0 can be used!
+   		//texturing calculations
+    	int texNum = map_ig[map_x][map_y] - 1; //1 subtracted from it so that texture 0 can be used!
 
-    // 	//calculate value of wall_x
-    // 	double wall_x; //where exactly the wall was hit
-    // 	if (side == 0) wall_x = game.numig.pos_y + perp_wall_dist * ray_dir_y;
-    // 	else           wall_x = game.numig.pos_x + perp_wall_dist * ray_dir_x;
-    // 	wall_x -= floor((wall_x));
+    	//calculate value of wall_x
+    	double wall_x; //where exactly the wall was hit
+    	if (side == 0) wall_x = game->numig.pos_y + perp_wall_dist * ray_dir_y;
+    	else           wall_x = game->numig.pos_x + perp_wall_dist * ray_dir_x;
+    	wall_x -= floor((wall_x));
 
-    //   //x coordinate on the texture
-    // 	game.texig.tex_x = (int)(wall_x * (double)(game.texig.texture_width));
-    // 	if(side == 0 && ray_dir_x > 0) game.texig.tex_x = game.texig.texture_width - game.texig.tex_x - 1;
-    // 	if(side == 1 && ray_dir_y < 0) game.texig.tex_x = game.texig.texture_width - game.texig.tex_x - 1;
+      //x coordinate on the texture
+    	game->texig.tex_x = (int)(wall_x * (double)(game->texig.texture_width));
+    	if(side == 0 && ray_dir_x > 0) game->texig.tex_x = game->texig.texture_width - game->texig.tex_x - 1;
+    	if(side == 1 && ray_dir_y < 0) game->texig.tex_x = game->texig.texture_width - game->texig.tex_x - 1;
 
-	  // ------------------------------------------------------------------------------------------------------------------------
-     	 //choose wall color
-			int color;
-			color = color_select(map_ig[map_x][map_y]);
-
-      //give x and y sides different brightness
-		    if (side == 1) 
-				color = color / 2;
-
-    		 //draw the pixels of the stripe as a vertical line
-	  		draw(img, x, draw_start, draw_end, color);
-	  		//verLine(x, draw_start, draw_end, color);
-// ------------------------------------------------------------------------------------------------------------------------------
-    // // How much to increase the texture coordinate per screen pixel
-    // 	double step = 1.0 * game.texig.texture_height / line_height;
-    // // Starting texture coordinate
-	// 	double texPos = (draw_start - h / 2 + line_height / 2) * step;
-    // 	for(int y = draw_start; y < draw_end; y++)
-    // 	{
-	// 	// Cast the texture coordinate to integer, and mask with (game.texig.texture_height - 1) in case of overflow
-    // 		game.texig.tex_y = (int)texPos & (game.texig.texture_height - 1);
-    //     	texPos += step;
-    //     	int color = game.texig.texture[texNum][game.texig.texture_height * game.texig.tex_y + game.texig.tex_x];
-    //     //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
-    //     	if(side == 1)
-	// 		{
-	// 			color = (color >> 1) & 8355711;
-    //     		game.texig.buffer[y][x] = color;
-	// 		}
-    // 	}
-	// //printf("YO LES ZINC %d\n", game.texig.buffer[0][0]);
-    // //	drawBuffer(game.texig.buffer[0]);
-    // for(int y = 0; y < h; y++)
-	// {
-	// //	printf ("valeur de y : %d\n", y);
-	// //	printf ("valeur de h : %d\n", h);
-	// 	for(int x = 0; x < w; x++)
-	// 	{
-	// 	//	printf ("valeur de x : %d\n", x);
-	// //		printf ("valeur de w : %d\n", w);
-	// 		game.texig.buffer[y][x] = 0; //clear the buffer instead of cls()
-	// 		//exit(0);
-	// 	}
-	// }
+    // How much to increase the texture coordinate per screen pixel
+    	double step = 1.0 * game->texig.texture_height / line_height;
+    // Starting texture coordinate
+		double texPos = (draw_start - h / 2 + line_height / 2) * step;
+    	int color;
+		for(int y = draw_start; y < draw_end; y++)
+    	{
+		// Cast the texture coordinate to integer, and mask with (game->texig.texture_height - 1) in case of overflow
+    		game->texig.tex_y = (int)texPos & (game->texig.texture_height - 1);
+        	texPos += step;
+        	color = game->texig.texture[texNum][game->texig.texture_height * game->texig.tex_y + game->texig.tex_x];
+        //make color darker for y-sides: R, G and B byte each divided through two with a "shift" and an "and"
+			//printf("--- valeur de color : %d\n", color);
+        	if (side == 1)
+			{
+				color = (color >> 1) & 8355711;
+        		//game->texig.buffer[y][x] = color;
+				//exit(0);
+			}
+		}
+		draw(game, game->imgig, x, draw_start, draw_end, color);
+		//exit(0);
+		//for(int y = 0; y < h; y++) for(int x = 0; x < w; x++) buffer[y][x] = 0;
+		
+		// for(int y = 0; y < h; y++)
+		// {
+		// 	for(int x = 0; x < w; x++)
+		// 	{
+		// 		game->texig.buffer[y][x] = 0;
+		// 	}
+		// }
 	}
+		//exit(0);
 	//siuu ?
 }
-
-int exit_game(void)
-{
-	
-	exit(0);
-}
-
-int key_press_hook(int keycode, void *params)
-{
-	t_game *game = (t_game *)params;
-	// game->nmig.start = time_calculator();
-	
-	game->numig.old_time = game->numig.time;
-	game->numig.time = time_calculator() - game->numig.start;
-	//printf("VALEUR DE START %f\n", game->numig.start);
-    game->numig.frame_time = (game->numig.time - game->numig.old_time) / 1000.0; //frame_time is the time this frame has taken, in seconds
-
-	printf("FPS %f\n", game->numig.frame_time);
-	printf("---- time %f\n", game->numig.time);
-	printf("old_time %f\n", game->numig.old_time);
-   
-    //speed modifiers
-    // game->numig.move_speed = game->numig.frame_time * 5.0; //the constant value is in squares/second
-	// printf("---- game->numig.move_speed : %f\n",game->numig.move_speed);
-    // game->numig.rot_speed = game->numig.frame_time * 3.0; //the constant value is in radians/second
-		
-	game->numig.move_speed = 0.17;
-	game->numig.rot_speed = 0.10;
-
-		
-	// printf("vec %f %f\n", game->numig.plane_x, game->numig.plane_y);
-	// printf("pos play %f %f\n", game->numig.pos_x, game->numig.pos_y);
-	// printf ("pos_x %f\n", game->numig.pos_x);
-	// printf ("dir_x %f\n", game->numig.dir_x);
-	// printf ("MS %f\n", game->numig.move_speed);
-	// printf ("pos_y %f\n", game->numig.pos_y);
-
-	if (keycode == 53)
-		exit_game();
-    if (keycode == 13)
-    {
-		//exit(0);
-     	if(map_ig[(int)(game->numig.pos_x + game->numig.dir_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
-			game->numig.pos_x += game->numig.dir_x * game->numig.move_speed;
-      	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y + game->numig.dir_y * game->numig.move_speed)] == 0)
-			game->numig.pos_y += game->numig.dir_y * game->numig.move_speed;
-   	}
-
-	// noalexan
-
-    //move backwards if no wall behind you
-    if (keycode == 1)
-    {
-		printf("Pressed S\n");
-      	if(map_ig[(int)(game->numig.pos_x - game->numig.dir_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
-			game->numig.pos_x -= game->numig.dir_x * game->numig.move_speed;
-      	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y - game->numig.dir_y * game->numig.move_speed)] == 0)
-			game->numig.pos_y -= game->numig.dir_y * game->numig.move_speed;
-	}
-
-	if (keycode == 2)
-    {
-		//exit(0);
-     	if(map_ig[(int)(game->numig.pos_x + game->numig.plane_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
-			game->numig.pos_x += game->numig.plane_x * game->numig.move_speed;
-      	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y + game->numig.plane_y * game->numig.move_speed)] == 0)
-			game->numig.pos_y += game->numig.plane_y * game->numig.move_speed;
-   	}
-
-	if (keycode == 0)
-    {
-		//exit(0);
-     	if(map_ig[(int)(game->numig.pos_x + game->numig.plane_x * game->numig.move_speed)][(int)game->numig.pos_y] == 0)
-			game->numig.pos_x -= game->numig.plane_x * game->numig.move_speed;
-      	if(map_ig[(int)game->numig.pos_x][(int)(game->numig.pos_y + game->numig.plane_y * game->numig.move_speed)] == 0)
-			game->numig.pos_y -= game->numig.plane_y * game->numig.move_speed;
-   	}
-
-    //rotate to the right
-    if (keycode == 124)
-    {
-		printf("Pressed A\n");
-      //both camera direction and camera plane must be rotated
-      	double oldDir_x = game->numig.dir_x;
-      	game->numig.dir_x = game->numig.dir_x * cos(-game->numig.rot_speed) - game->numig.dir_y * sin(-game->numig.rot_speed);
-      	game->numig.dir_y = oldDir_x * sin(-game->numig.rot_speed) + game->numig.dir_y * cos(-game->numig.rot_speed);
-      	double oldPlane_x = game->numig.plane_x;
-      	game->numig.plane_x = game->numig.plane_x * cos(-game->numig.rot_speed) - game->numig.plane_y * sin(-game->numig.rot_speed);
-      	game->numig.plane_y = oldPlane_x * sin(-game->numig.rot_speed) + game->numig.plane_y * cos(-game->numig.rot_speed);
-		
-   	}
-    //rotate to the left
-    if (keycode == 123)
-    {
-		printf("Pressed D\n");
-      //both camera direction and camera plane must be rotated
-      	double oldDir_x = game->numig.dir_x;
-      	game->numig.dir_x = game->numig.dir_x * cos(game->numig.rot_speed) - game->numig.dir_y * sin(game->numig.rot_speed);
-      	game->numig.dir_y = oldDir_x * sin(game->numig.rot_speed) + game->numig.dir_y * cos(game->numig.rot_speed);
-      	double oldPlane_x = game->numig.plane_x;
-      	game->numig.plane_x = game->numig.plane_x * cos(game->numig.rot_speed) - game->numig.plane_y * sin(game->numig.rot_speed);
-      	game->numig.plane_y = oldPlane_x * sin(game->numig.rot_speed) + game->numig.plane_y * cos(game->numig.rot_speed);
-   	}
-  	mlx_clear_window(game->mlx, game->window); // cls();
-	game->imgig.img = mlx_new_image(game->mlx, 1024, 720);
-	game->imgig.addr = mlx_get_data_addr(game->imgig.img, &game->imgig.bits_per_pixel, &game->imgig.line_length, &game->imgig.endian);
-	game_loop(*game, game->imgig, game->numig.pos_x, game->numig.pos_y, game->numig.dir_x, game->numig.dir_y, game->numig.plane_x, game->numig.plane_y);
-	mlx_put_image_to_window(game->mlx, game->window, game->imgig.img, 0, 0); // redraw();
-	return 0;
-}
-
-int malloc_texture(t_game *game)
-{
-	game->texig.buffer = malloc(720 * 1024 * sizeof(int)); // y-coordinate first because it works per scanline
-	for (int i = 0; i < 8; i++) {
-		game->texig.texture[i] = malloc(/*game.texig.texture_width*/64 * 64/*game.texig.texture_height*/ * sizeof(int));
-	}
-	return 0;
-}
-
-
-// void free_texture(t_game *game)
-// {
-// 	int i;
-//     for (i = 0; i < 8; i++)
-// 	{
-//         free(game->texig.texture[i]);
-//     }
-// }
-
 
 int main (int argc, char **argv)
 {
@@ -391,7 +209,6 @@ int main (int argc, char **argv)
 	game.numig.old_time = 0; //time of previous frame
 	game.numig.old_time = game.numig.time;
     game.numig.time = time_calculator() - game.numig.start;
-	malloc_texture(&game);
 	game.mlx = mlx_init();
 	game.window = mlx_new_window(game.mlx, 1024, 720, "cub3D");
 	game.imgig.img = mlx_new_image(game.mlx, 1024, 720);
@@ -399,13 +216,16 @@ int main (int argc, char **argv)
 
 	game.texig.texture_width = 64;
 	game.texig.texture_height = 64;
-	// int buff2[720][1024];
-	// game.texig.buffer = buff2; 
-	
-  //generate some textures
+
+	game.window_height = 720;
+	game.window_width = 1024;
+	malloc_texture(&game);
+	//exit(0);
+	//game.texig.buffer[0][2] = 21;
   for(int x = 0; x < game.texig.texture_width; x++)
   for(int y = 0; y < game.texig.texture_height; y++)
   {
+	printf("game.texig.texture_width : %d\n", game.texig.texture_width);
     int xorcolor = (x * 256 / game.texig.texture_width) ^ (y * 256 / game.texig.texture_height);
     //int xcolor = x * 256 / game.texig.texture_width;
     int ycolor = y * 256 / game.texig.texture_height;
@@ -419,14 +239,14 @@ int main (int argc, char **argv)
     game.texig.texture[6][game.texig.texture_width * y + x] = 65536 * ycolor; //red gradient
     game.texig.texture[7][game.texig.texture_width * y + x] = 128 + 256 * 128 + 65536 * 128; //flat grey texture
   }
-	malloc_texture(&game);
-	game_loop(game, game.imgig, game.numig.pos_x, game.numig.pos_y, game.numig.dir_x, game.numig.dir_y, game.numig.plane_x, game.numig.plane_y);
+	game_loop(&game, game.imgig, game.numig.pos_x, game.numig.pos_y, game.numig.dir_x, game.numig.dir_y, game.numig.plane_x, game.numig.plane_y);
+	//printf("valeur de buffer[x][y] :%d\n", game.texig.buffer[0][2]);
 	mlx_put_image_to_window(game.mlx, game.window, game.imgig.img, 0, 0); // redraw();
+	printf("oh\n");
 	mlx_hook(game.window, 17, (1L << 17), exit_game, &game);
  	mlx_hook(game.window, 2, (1L << 0), key_press_hook, &game); //readKeys();
-//	free_texture(&game);
+	//free_texture(&game);
 	// system ("leaks cub3d");
-	// exit(0);
 	mlx_loop(game.mlx);
 }
 

@@ -1,7 +1,9 @@
 NAME 	= 	cub3d
 FILES	= 	drawing			\
-			raytracing		\
+			raycasting		\
 			color_manager	\
+			key				\
+			utils			\
 			
 SRCS_DIR = ./
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
