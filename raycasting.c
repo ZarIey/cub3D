@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 17:16:58 by ctardy            #+#    #+#             */
-/*   Updated: 2023/03/06 21:27:28 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/03/14 15:37:24 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,30 +17,30 @@
 
 int map_ig[24][24] =
 {
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
-  {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-  {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+  {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7},
+  {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
+  {4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
+  {4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
+  {4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
+  {4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7},
+  {4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1},
+  {4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
+  {4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1},
+  {4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
+  {4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1},
+  {4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1},
+  {6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
+  {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
+  {6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
+  {4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
+  {4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2},
+  {4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
+  {4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2},
+  {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
+  {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
 };
 
 void game_loop(t_game *game, t_data img, double pos_x, double pos_y, double dir_x, double dir_y, double plane_x, double plane_y)
@@ -148,21 +148,26 @@ void game_loop(t_game *game, t_data img, double pos_x, double pos_y, double dir_
 
     	//calculate value of wall_x
     	double wall_x; //where exactly the wall was hit
-    	if (side == 0) wall_x = game->numig.pos_y + perp_wall_dist * ray_dir_y;
-    	else           wall_x = game->numig.pos_x + perp_wall_dist * ray_dir_x;
+    	if (side == 0)
+			wall_x = game->numig.pos_y + perp_wall_dist * ray_dir_y;
+    	else
+			wall_x = game->numig.pos_x + perp_wall_dist * ray_dir_x;
     	wall_x -= floor((wall_x));
 
       //x coordinate on the texture
     	game->texig.tex_x = (int)(wall_x * (double)(game->texig.texture_width));
-    	if(side == 0 && ray_dir_x > 0) game->texig.tex_x = game->texig.texture_width - game->texig.tex_x - 1;
-    	if(side == 1 && ray_dir_y < 0) game->texig.tex_x = game->texig.texture_width - game->texig.tex_x - 1;
+    	if(side == 0 && ray_dir_x > 0)
+			game->texig.tex_x = game->texig.texture_width - game->texig.tex_x - 1;
+    	if(side == 1 && ray_dir_y < 0)
+			game->texig.tex_x = game->texig.texture_width - game->texig.tex_x - 1;
 
     // How much to increase the texture coordinate per screen pixel
     	double step = 1.0 * game->texig.texture_height / line_height;
     // Starting texture coordinate
 		double texPos = (draw_start - h / 2 + line_height / 2) * step;
     	int color;
-		for(int y = draw_start; y < draw_end; y++)
+		int y = draw_start;
+		for(; y < draw_end; y++)
     	{
 		// Cast the texture coordinate to integer, and mask with (game->texig.texture_height - 1) in case of overflow
     		game->texig.tex_y = (int)texPos & (game->texig.texture_height - 1);
@@ -173,13 +178,20 @@ void game_loop(t_game *game, t_data img, double pos_x, double pos_y, double dir_
         	if (side == 1)
 			{
 				color = (color >> 1) & 8355711;
-        		//game->texig.buffer[y][x] = color;
+        	//	game->texig.buffer[y][x] = color;
 				//exit(0);
 			}
 		}
 		draw(game, game->imgig, x, draw_start, draw_end, color);
+		// while (game->texig.buffer[y][x])
+		// {
+		// 	while (game->texig.buffer[y] < game->window_height)
+		// 		my_mlx_pixel_put(&img, x, draw_start++, game->texig.buffer[y][x]);
+		// }
+
 		//exit(0);
-		//for(int y = 0; y < h; y++) for(int x = 0; x < w; x++) buffer[y][x] = 0;
+	}
+			//for(int y = 0; y < h; y++) for(int x = 0; x < w; x++) buffer[y][x] = 0;
 		
 		// for(int y = 0; y < h; y++)
 		// {
@@ -188,7 +200,6 @@ void game_loop(t_game *game, t_data img, double pos_x, double pos_y, double dir_
 		// 		game->texig.buffer[y][x] = 0;
 		// 	}
 		// }
-	}
 		//exit(0);
 	//siuu ?
 }
@@ -201,7 +212,7 @@ int main (int argc, char **argv)
 	t_game	game;
 	ft_memset(&game, 0, sizeof(t_game));
 
-	game.numig.pos_x = 14, game.numig.pos_y = 14;  //x and y start position
+	game.numig.pos_x = 18, game.numig.pos_y = 18;  //x and y start position
 	game.numig.dir_x = -1, game.numig.dir_y = 0; //initial direction vector
 	game.numig.plane_x = 0, game.numig.plane_y = 0.66; //the 2d raycaster version of camera plane
 	game.numig.time = 0; //time of current frame
@@ -222,10 +233,10 @@ int main (int argc, char **argv)
 	malloc_texture(&game);
 	//exit(0);
 	//game.texig.buffer[0][2] = 21;
-  for(int x = 0; x < game.texig.texture_width; x++)
+  for(int x = 0; x < game.texig.texture_width; x++) {
   for(int y = 0; y < game.texig.texture_height; y++)
   {
-	printf("game.texig.texture_width : %d\n", game.texig.texture_width);
+	//printf("game.texig.texture_width : %d\n", game.texig.texture_width);
     int xorcolor = (x * 256 / game.texig.texture_width) ^ (y * 256 / game.texig.texture_height);
     //int xcolor = x * 256 / game.texig.texture_width;
     int ycolor = y * 256 / game.texig.texture_height;
@@ -239,13 +250,14 @@ int main (int argc, char **argv)
     game.texig.texture[6][game.texig.texture_width * y + x] = 65536 * ycolor; //red gradient
     game.texig.texture[7][game.texig.texture_width * y + x] = 128 + 256 * 128 + 65536 * 128; //flat grey texture
   }
+  }
 	game_loop(&game, game.imgig, game.numig.pos_x, game.numig.pos_y, game.numig.dir_x, game.numig.dir_y, game.numig.plane_x, game.numig.plane_y);
 	//printf("valeur de buffer[x][y] :%d\n", game.texig.buffer[0][2]);
 	mlx_put_image_to_window(game.mlx, game.window, game.imgig.img, 0, 0); // redraw();
-	printf("oh\n");
+	//exit(0);
 	mlx_hook(game.window, 17, (1L << 17), exit_game, &game);
  	mlx_hook(game.window, 2, (1L << 0), key_press_hook, &game); //readKeys();
-	//free_texture(&game);
+	free_texture(&game);
 	// system ("leaks cub3d");
 	mlx_loop(game.mlx);
 }

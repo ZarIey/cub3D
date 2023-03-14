@@ -20,7 +20,7 @@ OBJS_B = $(addprefix $(OBJS_B_DIR), $(addsuffix .o, $(FILES_B)))
 LIBFT_DIR = ./includes/libft/
 LIBFT = $(addprefix $(LIBFT_DIR), libft.a)
 CC		= gcc
-CFLAGS	= -Wall -Werror -Wextra
+CFLAGS	= -Wall -Werror -Wextra -g
 
 LIBRARIES = -lft -L $(LIBFT_DIR) -lmlx -framework OpenGL -framework AppKit
 HEADERS = -I $(LIBFT_DIR)

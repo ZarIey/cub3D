@@ -6,7 +6,7 @@
 /*   By: ctardy <ctardy@student.42nice.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/04 16:34:10 by ctardy            #+#    #+#             */
-/*   Updated: 2023/03/06 17:50:22 by ctardy           ###   ########.fr       */
+/*   Updated: 2023/03/06 21:32:02 by ctardy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,14 +144,14 @@ int key_press_hook(int keycode, void *params)
 	game->imgig.addr = mlx_get_data_addr(game->imgig.img, &game->imgig.bits_per_pixel, &game->imgig.line_length, &game->imgig.endian);
 	game_loop(game, game->imgig, game->numig.pos_x, game->numig.pos_y, game->numig.dir_x, game->numig.dir_y, game->numig.plane_x, game->numig.plane_y);
 	mlx_put_image_to_window(game->mlx, game->window, game->imgig.img, 0, 0); // redraw();
-	//for(int y = 0; y < h; y++) for(int x = 0; x < w; x++) buffer[y][x] = 0;
+		//for(int y = 0; y < h; y++) for(int x = 0; x < w; x++) buffer[y][x] = 0;
 		
-		for(int y = 0; y < game->window_height; y++)
-		{
-			for(int x = 0; x < game->window_width; x++)
-			{
-				game->texig.buffer[y][x] = 0;
-			}
-		}
+		// for(int y = 0; y < h; y++)
+		// {
+		// 	for(int x = 0; x < w; x++)
+		// 	{
+		// 		game->texig.buffer[y][x] = 0;
+		// 	}
+		// }
 	return 0;
 }
